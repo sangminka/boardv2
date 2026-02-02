@@ -3,6 +3,7 @@ package com.example.boardv1.user;
 import org.springframework.stereotype.Service;
 
 import com.example.boardv1.user.UserRequset.JoinDTO;
+import com.example.boardv1.user.UserRequset.LoginDTO;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,17 @@ public class UserService {
         user.setEmail(joinDTO.getEmail());
 
         userRepository.save(user);
+    }
+
+    public User 로그인(LoginDTO reqDto) {
+        User findUser = userRepository.findByUsername(reqDto.getUsername());
+        if (findUser == null)
+            throw new RuntimeException("username을 찾을 수 없어요");
+
+        if (!findUser.getPassword().equals(reqDto.getPassword())) {
+            throw new RuntimeException("패스워드가 일치하지 않아요");
+        }
+        return findUser;
     }
 
 }
