@@ -1,5 +1,7 @@
 package com.example.boardv1.user;
 
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -50,7 +52,8 @@ public class UserRepositoryTest {
         // given
         String username = "ssar";
         // when
-        User findUser = userRepository.findByUsername(username);
+        User findUser = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("아이디를 찾을수 없어요요"));
         // eye
         System.out.println(findUser);
     }

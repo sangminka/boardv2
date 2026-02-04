@@ -4,6 +4,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 
@@ -17,9 +19,13 @@ public class UserController {
     // POST
 
     @PostMapping("/login")
-    public String methodName(UserRequset.LoginDTO reqDto) {
+    public String methodName(UserRequset.LoginDTO reqDto, HttpServletResponse resp) {
         User sessionUser = userService.로그인(reqDto);
         session.setAttribute("sessionUser", sessionUser);
+        Cookie cookie = new Cookie("username", sessionUser.getUsername());
+        cookie.setHttpOnly(false);
+        resp.addCookie(cookie);
+
         return "redirect:/";
     }
 
@@ -30,6 +36,13 @@ public class UserController {
     }
 
     // GET
+
+    @GetMapping("/logout")
+    public String logout() {
+        session.invalidate();
+        return "redirect:/";
+    }
+
     @GetMapping("/join-form")
     public String joinForm() {
         return "/user/join-form";

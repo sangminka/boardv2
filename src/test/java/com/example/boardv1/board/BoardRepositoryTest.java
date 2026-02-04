@@ -38,7 +38,8 @@ public class BoardRepositoryTest {
         // given
         int id = 1;
         // when
-        Board board = boardRepository.findById(id);
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("id로 찾을수 없어요"));
         // boardRepository.findById(1);
         // eye
         System.out.println(board);
@@ -71,21 +72,11 @@ public class BoardRepositoryTest {
     }
 
     @Test
-    public void findAllV2_test() {
-        // given
-
-        // when
-        boardRepository.findAllV2();
-
-        // eye
-
-    }
-
-    @Test
     public void delete_test() {
         // given
-        Board board = boardRepository.findById(1);
-        // when
+        int id = 1;
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("id로 찾을수 없어요")); // when
         boardRepository.delete(board);
 
         // eye
@@ -96,8 +87,10 @@ public class BoardRepositoryTest {
     @Test
     public void update_test() {
         // given
-        Board board = boardRepository.findById(1);
-
+        int id = 1;
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("id로 찾을수 없어요")); // when
+        boardRepository.delete(board);
         // when
         board.setTitle("title-update");
         // eye
@@ -110,6 +103,18 @@ public class BoardRepositoryTest {
         for (Board board2 : list) {
             System.out.println(board2);
         }
+    }
+
+    @Test
+    public void orm_test() {
+        int id = 1;
+
+        Board board = boardRepository.findById(id).get();
+
+        System.out.println("board -> user -> id: " + board.getUser().getId());
+        System.out.println("================================================");
+        System.out.println("board -> user -> username: " + board.getUser().getUsername());
+        System.out.println(board);
     }
 
 }

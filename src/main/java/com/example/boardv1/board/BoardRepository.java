@@ -1,6 +1,7 @@
 package com.example.boardv1.board;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Repository;
 
@@ -18,25 +19,31 @@ public class BoardRepository {
     // final이니까 반드시 초기화 해줘야함함
     private final EntityManager em;
 
-    public Board findById(int id) {
+    public Optional<Board> findByIdJoinUser(int id) {
+        String sql = "select b from Board b join fetch b.user u where b.id = :id";
+        Query query = em.createQuery(sql, Board.class);
+        query.setParameter("id", id);
+        try {
+            Board board = (Board) query.getSingleResult();
+            return Optional.of(board);
+        } catch (Exception e) {
+            return Optional.ofNullable(null);
+        }
+
+    }
+
+    public Optional<Board> findById(int id) {
         // select * from board_tb where id = 1;
         // ResultSet rs -> Board 객체 옮기기 (Object Mapping)
         // Board board = new Board();
         // board.id = rs.getInt("id");
         Board board = em.find(Board.class, id);
-        return board;
+        return Optional.ofNullable(board);
     }
 
     public List<Board> findAll() {
-        Query query = em.createQuery("select b from Board b order by b.id desc", Board.class);
-        List<Board> list = query.getResultList();
-        return list;
-
-    }
-
-    public void findAllV2() {
-        em.createQuery("select b.id, b.title from Board b").getResultList();
-
+        return em.createQuery("select b from Board b order by b.id desc", Board.class)
+                .getResultList();
     }
 
     public Board save(Board board) {
